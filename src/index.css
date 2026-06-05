@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Outfit', system-ui, sans-serif;
+  
+  --color-navy-50: #F8FAFC;
+  --color-navy-100: #F1F5F9;
+  --color-navy-200: #E2E8F0;
+  --color-navy-300: #CBD5E1;
+  --color-navy-400: #94A3B8;
+  --color-navy-500: #64748B;
+  --color-navy-600: #475569;
+  --color-navy-700: #334155;
+  --color-navy-800: #1E293B;
+  --color-navy-900: #0F172A;
+  --color-navy-950: #020617;
+  
+  --color-orange-primary: #093F6D;
+  --color-orange-dark: #051D35;
+  --color-orange-light: #E8F1FA;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+  }
+  
+  body {
+    @apply bg-navy-50 text-navy-800 antialiased transition-colors duration-300;
+  }
+
+  body.dark {
+    @apply bg-navy-950 text-navy-100;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-navy-300/80 rounded-full hover:bg-navy-400/80 dark:bg-navy-800/80 dark:hover:bg-navy-700/80;
+}
+
+/* Glassmorphism helpers */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.dark .glass-card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.testimonial-marquee {
+  overflow: hidden;
+  padding: 14px max(16px, calc((100vw - 1280px) / 2)) 26px;
+}
+
+.testimonial-marquee__track {
+  animation: testimonial-marquee 38s linear infinite;
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  will-change: transform;
+}
+
+.testimonial-marquee:hover .testimonial-marquee__track {
+  animation-play-state: paused;
+}
+
+.testimonial-card {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.48)),
+    rgba(255, 255, 255, 0.54);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.testimonial-card__quote {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
+}
+
+.dark .testimonial-card {
+  background:
+    linear-gradient(145deg, rgba(30, 41, 59, 0.78), rgba(15, 23, 42, 0.52)),
+    rgba(15, 23, 42, 0.58);
+}
+
+.testimonial-marquee__fade {
+  bottom: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: min(18vw, 170px);
+  z-index: 2;
+}
+
+.testimonial-marquee__fade--left {
+  background: linear-gradient(90deg, var(--color-navy-50), rgba(248, 250, 252, 0));
+  left: 0;
+}
+
+.testimonial-marquee__fade--right {
+  background: linear-gradient(270deg, var(--color-navy-50), rgba(248, 250, 252, 0));
+  right: 0;
+}
+
+.dark .testimonial-marquee__fade--left {
+  background: linear-gradient(90deg, rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0));
+}
+
+.dark .testimonial-marquee__fade--right {
+  background: linear-gradient(270deg, rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0));
+}
+
+@keyframes testimonial-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-50% - 12px));
+  }
+}
+
+@media (max-width: 640px) {
+  .testimonial-marquee {
+    padding: 8px 16px 18px;
+  }
+
+  .testimonial-marquee__track {
+    animation-duration: 30s;
+    gap: 16px;
+  }
+
+  .testimonial-marquee__fade {
+    width: 38px;
+  }
+}
+
+@media (min-width: 640px) {
+  .testimonial-card__quote {
+    -webkit-line-clamp: unset;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-marquee__track {
+    animation: none;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    width: 100%;
+  }
+
+  .testimonial-card {
+    scroll-snap-align: center;
+  }
+}
