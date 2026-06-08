@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import TrackingDetail from './components/TrackingDetail';
@@ -45,7 +45,7 @@ export default function App() {
     }
   };
 
-  const handleSelectService = (title) => {
+  const handleSelectService = () => {
     // When details is clicked on services, redirect them to the quote form to inquire
     handleScrollToSection('quote');
   };

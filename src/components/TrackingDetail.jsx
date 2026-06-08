@@ -1,5 +1,4 @@
-import React from 'react';
-import { PackageOpen, Plane, Truck, CheckCircle2, Circle, AlertCircle, ArrowRight, ShieldCheck, MapPin, X } from 'lucide-react';
+import { PackageOpen, Plane, Truck, CheckCircle2, AlertCircle, ArrowRight, ShieldCheck, MapPin, X } from 'lucide-react';
 
 const MOCK_SHIPMENTS = {
   'TRK-AIR-102': {

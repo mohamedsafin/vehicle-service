@@ -3,7 +3,7 @@ import LogisticsAnimation from './LogisticsAnimation';
 
 export default function Hero({ onGetQuote }) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-white via-navy-50/30 to-white dark:from-navy-950 dark:via-navy-900/50 dark:to-navy-950 transition-colors duration-300">
+    <section id="hero" className="relative overflow-hidden bg-gradient-to-br from-white via-navy-50/30 to-white dark:from-navy-950 dark:via-navy-900/50 dark:to-navy-950 transition-colors duration-300">
       {/* Dynamic animated background elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-orange-primary/15 via-orange-primary/5 to-transparent rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animation: 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}></div>
       <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-gradient-to-tr from-navy-400/10 dark:from-navy-400/5 to-transparent rounded-full blur-3xl pointer-events-none"></div>

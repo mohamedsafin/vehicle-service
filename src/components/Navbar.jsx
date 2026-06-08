@@ -1,18 +1,62 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Sun, Moon, Menu, X, ArrowRight } from 'lucide-react';
+
+const navLinks = [
+  { name: 'Services', id: 'services' },
+  { name: 'Fleet', id: 'fleet' },
+  { name: 'Metrics', id: 'metrics' },
+  { name: 'Testimonials', id: 'testimonials' },
+  { name: 'Contact', id: 'contact' }
+];
+
+const observedSectionIds = ['hero', ...navLinks.map((link) => link.id), 'quote'];
 
 export default function Navbar({ darkMode, toggleDarkMode, onScrollToSection }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
 
-  const navLinks = [
-    { name: 'Services', id: 'services' },
-    { name: 'Fleet', id: 'fleet' },
-    { name: 'Metrics', id: 'metrics' },
-    { name: 'Testimonials', id: 'testimonials' },
-    { name: 'Contact', id: 'contact' }
-  ];
+  useEffect(() => {
+    const navSectionIds = new Set(navLinks.map((link) => link.id));
+    const sections = observedSectionIds
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+
+    if (!sections.length) return undefined;
+
+    const updateActiveSection = () => {
+      const anchorLine = window.innerHeight * 0.35;
+      const currentSection = sections.find((section) => {
+        const rect = section.getBoundingClientRect();
+        return rect.top <= anchorLine && rect.bottom >= anchorLine;
+      });
+
+      setActiveSection(
+        currentSection && navSectionIds.has(currentSection.id)
+          ? currentSection.id
+          : ''
+      );
+    };
+
+    const observer = new IntersectionObserver(
+      () => updateActiveSection(),
+      {
+        root: null,
+        rootMargin: '-25% 0px -55% 0px',
+        threshold: [0.1, 0.25, 0.5, 0.75]
+      }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    updateActiveSection();
+
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+      observer.disconnect();
+    };
+  }, []);
 
   const handleLinkClick = (id) => {
+    setActiveSection(id);
     setIsOpen(false);
     onScrollToSection(id);
   };
@@ -25,9 +69,10 @@ export default function Navbar({ darkMode, toggleDarkMode, onScrollToSection }) 
       {/* Logo */}
       <div
         className="flex items-center gap-3 cursor-pointer"
-        onClick={() =>
-          window.scrollTo({ top: 0, behavior: "smooth" })
-        }
+        onClick={() => {
+          setActiveSection('');
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
       >
         <img 
           src="/logo.png" 
@@ -42,7 +87,14 @@ export default function Navbar({ darkMode, toggleDarkMode, onScrollToSection }) 
           <button
             key={link.id}
             onClick={() => handleLinkClick(link.id)}
-            className="font-medium text-gray-700 transition hover:text-orange-500 dark:text-white dark:hover:text-orange-500"
+            className={`relative pb-1.5 text-sm transition-colors duration-300 hover:text-orange-500 dark:hover:text-orange-500 ${
+              activeSection === link.id
+                ? 'font-semibold text-[#0F3D75] dark:text-[#0F3D75]'
+                : 'font-medium text-gray-700 dark:text-white'
+            } after:absolute after:left-0 after:bottom-0 after:h-0.5 after:rounded-full after:bg-[#0F3D75] after:transition-all after:duration-300 ${
+              activeSection === link.id ? 'after:w-full' : 'after:w-0'
+            }`}
+            aria-current={activeSection === link.id ? 'page' : undefined}
           >
             {link.name}
           </button>
@@ -135,7 +187,14 @@ export default function Navbar({ darkMode, toggleDarkMode, onScrollToSection }) 
         <button
           key={link.id}
           onClick={() => handleLinkClick(link.id)}
-          className="w-full rounded-2xl px-4 py-3 text-left text-sm font-semibold text-gray-700 transition hover:bg-gray-100 hover:text-[#093F6D] dark:text-gray-100 dark:hover:bg-slate-800"
+          className={`relative w-full rounded-2xl px-4 py-3 text-left text-sm transition hover:bg-gray-100 hover:text-[#093F6D] dark:hover:bg-slate-800 ${
+            activeSection === link.id
+              ? 'font-semibold text-[#0F3D75] dark:text-[#0F3D75]'
+              : 'font-semibold text-gray-700 dark:text-gray-100'
+          } after:absolute after:left-4 after:bottom-2 after:h-0.5 after:rounded-full after:bg-[#0F3D75] after:transition-all after:duration-300 ${
+            activeSection === link.id ? 'after:w-10' : 'after:w-0'
+          }`}
+          aria-current={activeSection === link.id ? 'page' : undefined}
         >
           {link.name}
         </button>
