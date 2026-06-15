@@ -24,13 +24,6 @@ import ContactSettingsPage from './admin/pages/ContactSettingsPage';
 function WebsiteHome() {
   const [darkMode, setDarkMode] = useState(false);
   const [trackingId, setTrackingId] = useState(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (import.meta.env.VITE_IS_ADMIN_LINK === 'true') {
-      navigate('/admin', { replace: true });
-    }
-  }, [navigate]);
 
   // Synchronize class list with dark mode state
   const toggleDarkMode = () => {
@@ -121,26 +114,35 @@ function WebsiteHome() {
 }
 
 export default function App() {
+  const isAdminLink = import.meta.env.VITE_IS_ADMIN_LINK === 'true';
+
+  if (isAdminLink) {
+    return (
+      <Routes>
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<DashboardPage />} />
+          <Route path="quotes" element={<QuoteManagementPage />} />
+          <Route path="fleet" element={<FleetManagementPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="contact-settings" element={<ContactSettingsPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/admin" replace />} />
+      </Routes>
+    );
+  }
+
   return (
     <Routes>
       <Route path="/" element={<WebsiteHome />} />
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute>
-            <AdminLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<DashboardPage />} />
-        <Route path="quotes" element={<QuoteManagementPage />} />
-        <Route path="contacts" element={<ContactMessagesPage />} />
-        <Route path="fleet" element={<FleetManagementPage />} />
-        <Route path="analytics" element={<AnalyticsPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="contact-settings" element={<ContactSettingsPage />} />
-      </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
