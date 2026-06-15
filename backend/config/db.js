@@ -7,7 +7,7 @@ const connectDB = async () => {
       .map((server) => server.trim())
       .filter(Boolean);
 
-    if (dnsServers?.length) {
+    if (dnsServers?.length && !process.env.VERCEL) {
       dns.setServers(dnsServers);
     }
 
@@ -15,7 +15,9 @@ const connectDB = async () => {
     console.log(`MongoDB connected: ${connection.connection.host}`);
   } catch (error) {
     console.error(`MongoDB connection failed: ${error.message}`);
-    process.exit(1);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
   }
 };
 
