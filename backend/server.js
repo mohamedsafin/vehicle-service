@@ -18,16 +18,36 @@ const port = process.env.PORT || 5000;
 connectDB();
 
 const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-const allowedOrigins = clientUrl.split(',').map((url) => url.trim());
+const allowedOrigins = clientUrl.split(',').map((url) => url.trim().replace(/\/$/, ''));
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      
+      const cleanOrigin = origin.replace(/\/$/, '');
+      
+      // Always allow localhost/127.0.0.1 for local development
+      if (/^http:\/\/localhost(:\d+)?$/.test(cleanOrigin) || /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(cleanOrigin)) {
         return callback(null, true);
       }
-      return callback(new Error(`Origin ${origin} not allowed by CORS`));
+      
+      // Always allow any vercel.app subdomain to make hosting seamless
+      if (/\.vercel\.app$/.test(cleanOrigin)) {
+        return callback(null, true);
+      }
+      
+      // Check allowed list
+      const isAllowed = allowedOrigins.some(allowed => {
+        const cleanAllowed = allowed.replace(/\/$/, '');
+        return cleanAllowed === '*' || cleanAllowed === cleanOrigin;
+      });
+      
+      if (isAllowed) {
+        return callback(null, true);
+      }
+      
+      return callback(null, false);
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
