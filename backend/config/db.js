@@ -14,7 +14,10 @@ const connectDB = async () => {
       dns.setServers(dnsServers);
     }
 
-    const connection = await mongoose.connect(process.env.MONGO_URI);
+    const connection = await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
+    });
     console.log(`MongoDB connected: ${connection.connection.host}`);
   } catch (error) {
     lastConnectionError = error.message;
