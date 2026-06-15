@@ -115,34 +115,62 @@ function WebsiteHome() {
 
 export default function App() {
   const isAdminLink = import.meta.env.VITE_IS_ADMIN_LINK === 'true';
+  const isDev = import.meta.env.DEV;
 
-  if (isAdminLink) {
+  // In production (Vercel), enforce strict URL isolation
+  if (!isDev) {
+    if (isAdminLink) {
+      return (
+        <Routes>
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<DashboardPage />} />
+            <Route path="quotes" element={<QuoteManagementPage />} />
+            <Route path="fleet" element={<FleetManagementPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="contact-settings" element={<ContactSettingsPage />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/admin" replace />} />
+        </Routes>
+      );
+    }
+
     return (
       <Routes>
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <AdminLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<DashboardPage />} />
-          <Route path="quotes" element={<QuoteManagementPage />} />
-          <Route path="fleet" element={<FleetManagementPage />} />
-          <Route path="analytics" element={<AnalyticsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="contact-settings" element={<ContactSettingsPage />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/admin" replace />} />
+        <Route path="/" element={<WebsiteHome />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
   }
 
+  // In local development, mount both routes for easy testing
   return (
     <Routes>
       <Route path="/" element={<WebsiteHome />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<DashboardPage />} />
+        <Route path="quotes" element={<QuoteManagementPage />} />
+        <Route path="fleet" element={<FleetManagementPage />} />
+        <Route path="analytics" element={<AnalyticsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+        <Route path="contact-settings" element={<ContactSettingsPage />} />
+      </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
