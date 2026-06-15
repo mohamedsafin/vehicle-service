@@ -78,7 +78,7 @@ app.use((error, _req, res, _next) => {
   console.error(error);
   res.status(500).json({
     success: false,
-    message: 'Server error while processing quote request',
+    message: error.message || 'Server error while processing quote request',
   });
 });
 
