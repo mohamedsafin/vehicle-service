@@ -2,7 +2,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import path from 'node:path';
-import connectDB from './config/db.js';
+import mongoose from 'mongoose';
+import connectDB, { lastConnectionError } from './config/db.js';
 import adminRoutes from './routes/adminRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
@@ -61,6 +62,28 @@ app.use('/uploads', express.static(uploadsPath));
 
 app.get('/api/health', (_req, res) => {
   res.status(200).json({ success: true, message: 'Quote API is running' });
+});
+
+app.get('/api/db-debug', async (_req, res) => {
+  const uri = process.env.MONGO_URI;
+  const maskedUri = uri ? uri.replace(/:([^@]+)@/, ':****@') : 'NOT_DEFINED';
+  const readyState = mongoose.connection.readyState;
+  const states = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting'
+  };
+  
+  res.status(200).json({
+    success: true,
+    readyState: readyState,
+    stateName: states[readyState] || 'unknown',
+    mongoUriConfigured: !!uri,
+    maskedUri: maskedUri,
+    lastConnectionError: lastConnectionError,
+    envKeys: Object.keys(process.env).filter(key => key.includes('MONGO') || key.includes('JWT') || key.includes('SMTP'))
+  });
 });
 
 app.use('/api/quotes', quoteRoutes);
