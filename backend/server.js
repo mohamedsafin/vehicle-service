@@ -25,7 +25,10 @@ app.use(
   })
 );
 app.use(express.json({ limit: '100kb' }));
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+const uploadsPath = process.env.VERCEL
+  ? path.join('/tmp', 'uploads')
+  : path.join(process.cwd(), 'uploads');
+app.use('/uploads', express.static(uploadsPath));
 
 app.get('/api/health', (_req, res) => {
   res.status(200).json({ success: true, message: 'Quote API is running' });
