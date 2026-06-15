@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import Admin from '../models/Admin.js';
 
 const createToken = (adminId) =>
-  jwt.sign({ id: adminId }, process.env.JWT_SECRET, {
+  jwt.sign({ id: adminId }, process.env.JWT_SECRET || 'super_secret_logixflow_key_1234', {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   });
 
